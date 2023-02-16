@@ -724,7 +724,7 @@ contract Future is IFuture, ReentrancyGuard, Ownable {
         address _receiver
     ) public override nonReentrant returns (uint256) {
         _validateRouter(_account);
-        require(_account == _receiver, "Invalid caller");
+        // require(_account == _receiver, "Invalid caller");
         require(getPairStatus(_collateralToken, _indexToken) == PairStatus.list, "pair_unlist");
         validateLiquidate(_collateralToken, _indexToken, _account, _isLong, true);
         Position storage pos = _getPosition(_collateralToken, _indexToken, _account, _isLong);
@@ -858,7 +858,7 @@ contract Future is IFuture, ReentrancyGuard, Ownable {
         uint256 _notionalDelta,
         address _receiver
     ) private returns (uint256) {
-        require(_account == _receiver, "Invalid caller");
+        // require(_account == _receiver, "Invalid caller");
         Position storage pos = _getPosition(_collateralToken, _indexToken, _account, _isLong);
 
         (int256 fundingFee, uint256 tradingFee, int256 pnl, , ) = _calcNewPosition(
@@ -1789,6 +1789,7 @@ contract Future is IFuture, ReentrancyGuard, Ownable {
         address _receiver
     ) private {
         IERC20(_token).safeTransfer(_receiver, _amount);
+
         tokenBalances[_token] = IERC20(_token).balanceOf(address(this));
     }
 

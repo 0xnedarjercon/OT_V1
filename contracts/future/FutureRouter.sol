@@ -27,7 +27,7 @@ contract FutureRouter {
     address public tradeStakeUpdater;
 
     constructor(
-        address _future,    
+        address _future,
         address _weth,
         address _swapPool,
         address _tradeStakeUpdater,
@@ -352,7 +352,11 @@ contract FutureRouter {
         uint256[] memory increaseOrderIndexes,
         address[] memory decreaseOrderAccounts,
         uint256[] memory decreaseOrderIndexes
-    ) public view returns(bool[] memory increaseOrderExecables, bool[] memory decreaseOrderExecables) {
+    )
+        public
+        view
+        returns (bool[] memory increaseOrderExecables, bool[] memory decreaseOrderExecables)
+    {
         uint256 increaseOrderLen = increaseOrderAccounts.length;
         uint256 decreaseOrderLen = decreaseOrderAccounts.length;
         require(increaseOrderLen == increaseOrderIndexes.length, "invalid_length");
@@ -362,10 +366,16 @@ contract FutureRouter {
         decreaseOrderExecables = new bool[](decreaseOrderLen);
 
         for (uint256 i = 0; i < increaseOrderLen; i++) {
-            increaseOrderExecables[i] = IFutureLimit(futureLimit).increaseOrderExecable(increaseOrderAccounts[i], increaseOrderIndexes[i]);
+            increaseOrderExecables[i] = IFutureLimit(futureLimit).increaseOrderExecable(
+                increaseOrderAccounts[i],
+                increaseOrderIndexes[i]
+            );
         }
         for (uint256 i = 0; i < decreaseOrderLen; i++) {
-            decreaseOrderExecables[i] = IFutureLimit(futureLimit).decreaseOrderExecable(decreaseOrderAccounts[i], decreaseOrderIndexes[i]);
+            decreaseOrderExecables[i] = IFutureLimit(futureLimit).decreaseOrderExecable(
+                decreaseOrderAccounts[i],
+                decreaseOrderIndexes[i]
+            );
         }
     }
 
@@ -427,7 +437,7 @@ contract FutureRouter {
             _indexToken,
             msg.sender,
             _isLong,
-            _notionalDelta            
+            _notionalDelta
         );
         IFuture(future).increasePosition(
             _collateralToken,
@@ -447,7 +457,8 @@ contract FutureRouter {
         uint256 _notionalDelta,
         uint256 _collateralPrice,
         uint256 _indexPrice,
-        address _receiver
+        address _receiver,
+        address _tokenOut
     ) external {
         _decreasePosition(
             _collateralToken,
@@ -457,7 +468,8 @@ contract FutureRouter {
             _notionalDelta,
             _collateralPrice,
             _indexPrice,
-            _receiver
+            _receiver,
+            _tokenOut
         );
     }
 
@@ -481,6 +493,7 @@ contract FutureRouter {
             _notionalDelta,
             _collateralPrice,
             _indexPrice,
+            address(this),
             address(this)
         );
         IWETH(weth).withdraw(amountOut);
@@ -498,7 +511,7 @@ contract FutureRouter {
             _collateralToken,
             _indexToken,
             _account,
-            _isLong     
+            _isLong
         );
         IFuture(future).liquidatePosition(_collateralToken, _indexToken, _account, _isLong);
     }
@@ -632,8 +645,10 @@ contract FutureRouter {
         uint256 _notionalDelta,
         uint256 _collateralPrice,
         uint256 _indexPrice,
-        address _receiver
+        address _receiver,
+        address _tokenOut
     ) private returns (uint256) {
+        require(msg.sender == _receiver, "Invalid caller");
         if (_collateralPrice > 0) {
             require(IFuture(future).getPrice(_collateralToken) >= _collateralPrice, "price_limit");
         }
@@ -647,15 +662,36 @@ contract FutureRouter {
             _isLong,
             _marginDelta,
             _notionalDelta,
-            _receiver        
+            _receiver
         );
-        return
-            IFuture(future).decreasePosition(
+
+        if (_tokenOut != _collateralToken) {
+            uint256 _amountOut = IFuture(future).decreasePositionByRatio(
                 _collateralToken,
                 _indexToken,
                 msg.sender,
                 _isLong,
-                _marginDelta,
+                _notionalDelta,
+                address(this)
+            );
+            IERC20(_collateralToken).approve(swapPool, _amountOut);
+            return
+                ISwapForFuture(swapPool).swapIn(
+                    _collateralToken,
+                    _tokenOut,
+                    _amountOut,
+                    0,
+                    _receiver,
+                    0
+                );
+        }
+
+        return
+            IFuture(future).decreasePositionByRatio(
+                _collateralToken,
+                _indexToken,
+                msg.sender,
+                _isLong,
                 _notionalDelta,
                 _receiver
             );

@@ -1,0 +1,147 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ISwap",
+  "sourceName": "contracts/perpheral/Reader.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "getPoolFeePolicy",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "feeType",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint16",
+          "name": "feeRate0",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint16",
+          "name": "feeRate1",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint16",
+          "name": "feeRate2",
+          "type": "uint16"
+        },
+        {
+          "internalType": "uint8",
+          "name": "revenueRate",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "revenueOsd",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "getPoolInfo",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "liquidity",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "createdAt",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "rebalancible",
+          "type": "bool"
+        },
+        {
+          "internalType": "bool",
+          "name": "usePriceFeed",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "getPoolState",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "reserve",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastRatioToken",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "lastRatioOsd",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "osd_",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        }
+      ],
+      "name": "getPriceRatio",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenRatio",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "osdRatio",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
